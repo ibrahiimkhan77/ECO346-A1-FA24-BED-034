@@ -1,6 +1,5 @@
 source("scripts/00_prepare.R")
 dir.create("figures", showWarnings = FALSE)
-dir.create("tables", showWarnings = FALSE)
 
 # ---- band table: one row per sex and band ----
 band_table <- lit_sample %>%
@@ -12,7 +11,7 @@ band_table <- lit_sample %>%
   ) %>%
   mutate(thin = n < 30)
 
-write_csv(band_table, "tables/band_table_R.csv")
+write_csv(band_table, "figures/band_table_R.csv")
 
 # ---- wide version for the README table and the gap calculation ----
 wide <- band_table %>%
@@ -26,7 +25,6 @@ md_lines <- c(
   sprintf("| %s | %s | %.1f | %s | %.1f |",
           wide$band, wide$n_Women, wide$rate_Women, wide$n_Men, wide$rate_Men)
 )
-writeLines(md_lines, "tables/band_table.md")
 
 # ---- band with the largest gap between men and women ----
 gap_df <- wide %>% mutate(gap = rate_Men - rate_Women)
@@ -81,4 +79,8 @@ get_rate <- function(b, s) {
 cat("15-19: Women", get_rate("15-19", "Women"), " Men", get_rate("15-19", "Men"), "\n")
 cat("55-59: Women", get_rate("55-59", "Women"), " Men", get_rate("55-59", "Men"), "\n")
 cat("Largest gap band:", top$band, " gap:", round(abs(top$gap), 1), "\n")
+cat("\nREADME table:\n")
+cat(md_lines, sep = "\n")
+cat("\n")
 print(as.data.frame(band_table))
+#.
